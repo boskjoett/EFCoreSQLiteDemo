@@ -1,0 +1,72 @@
+﻿using System;
+using System.IO;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
+// Based on this article: https://docs.microsoft.com/en-us/ef/core/get-started/?tabs=netcore-cli
+
+namespace SqLiteDemo
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("SQLite Demo");
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                      .SetBasePath(Directory.GetCurrentDirectory())
+                      .AddJsonFile("appsettings.json", true, true)
+                      .Build();
+
+            string connectionString = configuration.GetConnectionString("SQLite");
+
+            using (var db = new BloggingContext(connectionString))
+            {
+                // Show existing blogs
+                var blogs = db.Blogs
+                    .OrderBy(b => b.BlogId)
+                    .Include(blog => blog.Posts);
+
+                foreach (var b in blogs)
+                {
+                    Console.WriteLine($"Blog ID: {b.BlogId}, URL: {b.Url}");
+
+                    foreach (var p in b.Posts)
+                    {
+                        Console.WriteLine($"   Post ID: {p.PostId}, Title: {p.Title}, Content: {p.Content}");
+                    }
+                }
+
+                // Create
+                Console.WriteLine("\n---------------------");
+                Console.WriteLine("Inserting a new blog");
+
+                Console.Write("Enter URL: ");
+                string url = Console.ReadLine();
+                var newBlog = db.Add(new Blog { Url = url });
+
+                Console.WriteLine("\nInserting a blog post");
+
+                Console.Write("Enter title: ");
+                string title = Console.ReadLine();
+                Console.Write("Enter content: ");
+                string content = Console.ReadLine();
+
+                newBlog.Entity.Posts.Add(
+                    new Post
+                    {
+                        Title = title,
+                        Content = content
+                    });
+
+                db.SaveChanges();
+
+                // Delete
+                //Console.WriteLine("Delete the blog");
+                //db.Remove(blog);
+                //db.SaveChanges();
+            }
+        }
+    }
+}
