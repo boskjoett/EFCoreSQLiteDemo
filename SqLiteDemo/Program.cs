@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 // Based on this article: https://docs.microsoft.com/en-us/ef/core/get-started/?tabs=netcore-cli
 
@@ -14,14 +12,7 @@ namespace SqLiteDemo
         {
             Console.WriteLine("SQLite Demo");
 
-            IConfiguration configuration = new ConfigurationBuilder()
-                      .SetBasePath(Directory.GetCurrentDirectory())
-                      .AddJsonFile("appsettings.json", true, true)
-                      .Build();
-
-            string connectionString = configuration.GetConnectionString("SQLite");
-
-            using (var db = new BloggingContext(connectionString))
+            using (var db = new BloggingContext())
             {
                 // Show existing blogs
                 var blogs = db.Blogs
@@ -34,7 +25,7 @@ namespace SqLiteDemo
 
                     foreach (var p in b.Posts)
                     {
-                        Console.WriteLine($"   Post ID: {p.PostId}, Title: {p.Title}, Content: {p.Content}");
+                        Console.WriteLine($"\n   Post ID: {p.PostId}, Created: {p.Created}, Title: {p.Title}, Content: {p.Content}");
                     }
                 }
 
@@ -56,6 +47,7 @@ namespace SqLiteDemo
                 newBlog.Entity.Posts.Add(
                     new Post
                     {
+                        Created = DateTime.Now,
                         Title = title,
                         Content = content
                     });

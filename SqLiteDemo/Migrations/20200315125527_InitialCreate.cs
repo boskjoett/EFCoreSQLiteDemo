@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SqLiteDemo.Migrations
 {
@@ -25,6 +26,7 @@ namespace SqLiteDemo.Migrations
                 {
                     PostId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    Created = table.Column<DateTime>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Content = table.Column<string>(nullable: true),
                     BlogId = table.Column<int>(nullable: false)

@@ -1,24 +1,8 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SqLiteDemo
 {
-    public class BloggingContext : DbContext
-    {
-        private string _connectionString;
-
-        public DbSet<Blog> Blogs { get; set; }
-        public DbSet<Post> Posts { get; set; }
-
-        public BloggingContext(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlite(_connectionString);
-    }
-
     public class Blog
     {
         public int BlogId { get; set; }
@@ -30,6 +14,7 @@ namespace SqLiteDemo
     public class Post
     {
         public int PostId { get; set; }
+        public DateTime Created { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
 
