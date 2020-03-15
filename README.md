@@ -20,4 +20,4 @@ To create a Docker image:
 
     docker build -t sqlite-demo .
 
-    docker run -it -e ConnectionStrings__SQLite="Data Source=/database/blogging.db" sqlite-demo
+    docker run -it -e ConnectionStrings__SQLite="Data Source=/database/blogging.db" -v "C:/temp/database:/database" sqlite-demo
