@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,11 +22,24 @@ namespace SqLiteDemo
 
             _connectionString = configuration.GetConnectionString("SQLite");
 
-            Console.WriteLine("SQLite connection string: " + _connectionString);
+            // Fix: Remove connection string logging to prevent exposure of sensitive data
+            // Console.WriteLine("SQLite connection string: " + _connectionString);
+            
+            // Fix: Add validation for connection string
+            if (string.IsNullOrEmpty(_connectionString))
+            {
+                throw new InvalidOperationException("SQLite connection string not found in configuration.");
+            }
         }
 
         public BloggingContext(string connectionString)
         {
+            // Fix: Add validation for connection string parameter
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new ArgumentException("Connection string cannot be null or empty.", nameof(connectionString));
+            }
+            
             _connectionString = connectionString;
         }
 
